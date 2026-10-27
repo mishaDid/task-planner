@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Планировщик задач</title>
+<meta name="description" content="Планировщик задач: календарь, задачи на день и на неделю, статистика продуктивности.">
+<meta name="theme-color" content="#5B7FDE">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Планировщик">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Header / Hero -->
+  <header class="app-header">
+    <button class="avatar" id="avatarBtn" aria-label="Аватар"></button>
+    <div class="header-text">
+      <p class="greeting" id="greetingText">—</p>
+      <p class="header-date" id="headerDate">—</p>
+    </div>
+    <div class="header-ring" id="headerRing" title="Прогресс недели">
+      <div class="ring">
+        <svg viewBox="0 0 46 46" width="46" height="46">
+          <circle class="ring-bg" cx="23" cy="23" r="19"></circle>
+          <circle class="ring-fg" id="headerRingFg" cx="23" cy="23" r="19"></circle>
+        </svg>
+        <div class="ring-label" id="headerRingLabel">0%</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="views">
+
+    <!-- CALENDAR VIEW -->
+    <section class="view active" id="view-calendar">
+
+      <div class="card">
+        <h2 id="weekGoalsTitle">Задачи недели</h2>
+        <p class="hint" id="weekGoalsHint">Цели, которые держат в голове всю неделю</p>
+        <ul class="task-list" id="weekGoalsList"></ul>
+        <div class="add-row">
+          <input type="text" id="weekGoalInput" placeholder="Новая задача на неделю…" maxlength="140">
+          <button id="weekGoalAddBtn">Добавить</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="calPrevBtn" aria-label="Предыдущий месяц">‹</button>
+          <div class="cal-title">
+            <div class="cal-month-label" id="calMonthLabel">—</div>
+            <select class="cal-year-select" id="calYearSelect"></select>
+          </div>
+          <button class="cal-nav-btn" id="calNextBtn" aria-label="Следующий месяц">›</button>
+        </div>
+        <div class="cal-weekdays" id="calWeekdays"></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+    </section>
+
+    <!-- STATS VIEW -->
+    <section class="view" id="view-stats">
+      <div class="card">
+        <h2 id="weekProgressTitle">Прогресс недели</h2>
+        <div class="ring-xl">
+          <svg viewBox="0 0 150 150" width="150" height="150">
+            <circle class="ring-bg" cx="75" cy="75" r="62"></circle>
+            <circle class="ring-fg" id="statsRingFg" cx="75" cy="75" r="62"></circle>
+          </svg>
+          <div class="ring-xl-label">
+            <div class="pct" id="statsPct">0%</div>
+            <div class="sub" id="statsSub">0/0 · выполнено</div>
+          </div>
+        </div>
+        <div class="badge" id="statsBadge">—</div>
+      </div>
+
+      <div class="card">
+        <h2 id="weekHistoryTitle">История недель</h2>
+        <div class="history-list" id="historyList"></div>
+        <p class="empty-note" id="historyEmpty" style="display:none;">История появится после первой завершённой недели.</p>
+      </div>
+    </section>
+
+    <!-- SETTINGS VIEW -->
+    <section class="view" id="view-settings">
+
+      <div class="card">
+        <h2 id="settingsAvatarTitle">Аватар</h2>
+        <div class="emoji-grid" id="emojiGrid"></div>
+        <div class="upload-row">
+          <input type="file" id="avatarUpload" accept="image/*" hidden>
+          <button class="upload-btn" id="avatarUploadBtn">📷 Загрузить фото</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <div>
+            <div class="label" id="settingsThemeLabel">Тема</div>
+          </div>
+        </div>
+        <div class="seg theme-seg" id="themeSeg">
+          <button data-val="light">☀️ Светлая</button>
+          <button data-val="dark">🌙 Тёмная</button>
+        </div>
+
+        <div class="section-spacer"></div>
+
+        <div class="settings-row">
+          <div class="label" id="settingsLangLabel">Язык</div>
+        </div>
+        <div class="seg" id="langSeg">
+          <button data-val="ru">RU</button>
+          <button data-val="uk">UA</button>
+          <button data-val="en">EN</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <div>
+            <div class="label" id="settingsAnimLabel">Анимации интерфейса</div>
+          </div>
+          <button class="switch" id="animSwitch"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="label" id="settingsConfettiLabel">Салют при 100% недели</div>
+          </div>
+          <button class="switch" id="confettiSwitch"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="label" id="settingsSoundLabel">Звук при выполнении задачи</div>
+          </div>
+          <button class="switch" id="soundSwitch"></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label" id="settingsDangerLabel" style="margin-bottom:2px;">Сбросить все данные</div>
+        <div class="sub" id="settingsDangerHint" style="margin-bottom:10px;">Удалит задачи, статистику и настройки на этом устройстве</div>
+        <button class="danger-btn" id="resetBtn">Сбросить</button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="calendar">
+      <span class="ic">🗓️</span><span class="lb" id="navCalLabel">Календарь</span>
+    </button>
+    <button class="nav-btn" data-view="stats">
+      <span class="ic">📊</span><span class="lb" id="navStatsLabel">Статистика</span>
+    </button>
+    <button class="nav-btn" data-view="settings">
+      <span class="ic">⚙️</span><span class="lb" id="navSettingsLabel">Настройки</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- Day bottom sheet -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="daySheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <h3 id="sheetDate">—</h3>
+    <button class="sheet-close" id="sheetCloseBtn">✕</button>
+  </div>
+  <div class="sheet-body">
+    <ul class="task-list" id="dayTaskList"></ul>
+    <div class="add-row">
+      <input type="text" id="dayTaskInput" placeholder="Новая задача…" maxlength="140">
+      <button id="dayTaskAddBtn">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
